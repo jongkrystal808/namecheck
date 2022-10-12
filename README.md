@@ -6,8 +6,8 @@
 ![img](https://img-community.csdnimg.cn/images/432cf73aac054f528d3579727aaed204.JPG "#left")
 
 ## 运行方式
-#### 1.使用data.cpp生成数据集
-#### 2.用generate.cpp输入数据
+#### 1.generatedata文件中的作为一个项目，使用data.cpp编译运行生成考勤表
+#### 2.test文件中的作为另外一个项目，用main.cpp编译运行输出抽点方案和E。（说明:需要输入文件路径，把考勤表移到同一文件夹中输入考勤表名字即可，如输入:course1.txt）
 
 ## 数据集
 文件夹namelist中有五个文件（按课程分），分别为：course1.txt, course2.txt, course3.txt, course4.txt, course5.txt
