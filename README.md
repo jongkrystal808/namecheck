@@ -7,8 +7,8 @@
 
 ## 运行方式
 #### 1.使用data.c生成数据集
-#### 2.用read.c输入数据
-#### 3.
+#### 2.用generate.cpp输入数据
+
 ## 数据集
 文件夹namelist中有五个文件（按课程分），分别为：course1.txt, course2.txt, course3.txt, course4.txt, course5.txt
 
