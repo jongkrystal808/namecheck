@@ -1,7 +1,7 @@
 # rollnamecheck
 2022秋软工实践 第二次结对编程作业
 ## 实验环境
-本次作业编程语言为**C++**，编译器可使用**Dev-C++11.**
+本次作业编程语言为**C++**，编译器可使用**Dev-C++C11标准**
 
 ![img](https://img-community.csdnimg.cn/images/432cf73aac054f528d3579727aaed204.JPG "#left")
 
