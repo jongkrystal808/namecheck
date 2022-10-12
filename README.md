@@ -6,7 +6,7 @@
 ![img](https://img-community.csdnimg.cn/images/432cf73aac054f528d3579727aaed204.JPG "#left")
 
 ## 运行方式
-#### 1.使用data.c生成数据集
+#### 1.使用data.cpp生成数据集
 #### 2.用generate.cpp输入数据
 
 ## 数据集
