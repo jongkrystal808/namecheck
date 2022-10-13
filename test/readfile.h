@@ -17,7 +17,7 @@ typedef struct Student{
 }Student;
 
 
-Student *ReadFile(string filename); //�����ļ��ĺ���
+Student *ReadFile(string filename); //读入文件的函数
 int RandomRollCall2(int i, int Pre_absenceCount,Student *stu,int c[21][91],int a[21][91]); 
 void Random_Roll_Call(Student *stu);
 int CmpGrade(const void* a, const void* b);
@@ -25,7 +25,3 @@ int CmpTrust(const void* a, const void* b);
 void ReadFiveCourse();
 void PrintE();
 #endif
-
-
-
-

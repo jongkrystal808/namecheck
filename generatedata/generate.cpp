@@ -175,6 +175,7 @@ void WriteFile(string filename)
 	fstream file(filename.c_str(), ios::out);
 	Student *stu = new Student[90];
 	stu = AttendanceSheet();
+	qsort(stu,90,sizeof(Student),CmpString); 
 	dataFile << "姓名      学号          绩点    职位  信任值" <<endl; 
 	
 	for (int i=0; i<90; i++)
