@@ -5,21 +5,26 @@
 #include<stdlib.h>
 #include<time.h>
 #include "readfile.h"
-int TotalRequest;
-int	ValidRequest;
+int TotalRequest=0;
+int	ValidRequest=0;
 Student *ReadFile(string filename){ 
 	ifstream infile;
+	string n;
 	infile.open(filename.c_str());
+	for(int i=0; i<5; i++) infile >> n;
 	Student *stu = new Student[90];
 	for(int i=0; i<90; i++)
 	{
 		infile >> stu[i].name;
 		infile >> stu[i].num;
 		infile >> stu[i].gpa;
+		infile >> stu[i].CourseCommitte;
+		infile >> stu[i].Trust; 
 		for(int j=0; j<20; j++)
 		{
 			infile >> stu[i].Attend[j];
 		}
+		stu[i].AbsenceRate = 0;
 	}
 	infile.close();
 	return stu;
@@ -28,98 +33,86 @@ Student *ReadFile(string filename){
 int RandomRollCall2(int i, int Pre_absenceCount,Student *stu,int c[21][91],int a[21][91])
 {
 	int absence_count = 0; 
-	TotalRequest += Pre_absenceCount; //Ö®Ç°È±ÇÚµÄÄÇ¼¸¸öÕâÒ»´ÎÒ»¶¨µã
+	TotalRequest += Pre_absenceCount; //ä¹‹å‰ç¼ºå‹¤çš„é‚£å‡ ä¸ªè¿™ä¸€æ¬¡ä¸€å®šç‚¹
 	for(int j=0; j<Pre_absenceCount; j++)
 	{
 		if(stu[c[i-1][j]].Attend[i-1] == 0)
 		{
 			c[i][absence_count] = c[i-1][j];
 			a[i][c[i-1][j]] = 1;
-			stu[c[i-1][j]].Absence_Rate++;
+			stu[c[i-1][j]].Trust -= 0.1;
+			stu[c[i-1][j]].AbsenceRate++;
 			ValidRequest++;
 			absence_count++;
 		} 
-		else if(stu[c[i-1][j]].Attend[i-1] == 1 && stu[c[i-1][j]].Attend_Rate <= 4) //Èç¹ûÖ®Ç°µ½µÄ´ÎÊıĞ¡ÓÚ4£¬ÎÒÃÇÒ²ÒªµãËü¡£ 
+		else if(stu[c[i-1][j]].Attend[i-1] == 1 && stu[c[i-1][j]].AbsenceRate >= 1) //å¦‚æœä¹‹å‰ç¼ºå‹¤å·²ç»è¶…è¿‡2æ¬¡ï¼Œå³ä½¿è¿™æ¬¡åˆ°äº†ï¼Œä¸‹æ¬¡ä¹Ÿç‚¹å®ƒï¼› 
 		{
 			c[i][absence_count] = c[i-1][j];
 			a[i][c[i-1][j]] = 1;
-			stu[c[i-1][j]].Absence_Rate++;
 			absence_count++;
-			stu[c[i-1][j]].Attend_Rate++;
 		}
-		else 
-		{
-			stu[c[i-1][j]].Attend_Rate++;
-		 } 
 	}
-	if(Pre_absenceCount <= 2)//µÚÒ»´Î³éµãµ½µÄÈËÊı½ÏÉÙ£¬ÎªÁËÌá¸ß³éµãĞ§ÂÊ£¬ÔÚ³éµãÒ»´Î 
+	if(i == 2 && absence_count < 3)
 	{
-		for(int j=85; j<90; j++) 
+		Student *stu1 = stu;
+		qsort(stu1+70,20,sizeof(Student),CmpTrust);
+		for(int j=85; j<90; j++)
 		{
-			if(a[i-1][j] == 1) continue;
-			else
+			if(a[i-1][stu1[j].flag] == 1) continue;//è¿™æ¬¡å·²ç»ç‚¹è¿‡äº†å°±ä¸ç‚¹
+			TotalRequest++;
+			if(stu1[j].Attend[i-1] == 0)
 			{
-				if(stu[c[i-1][j]].Attend[i-1] == 0)
-				{
-					c[i][absence_count] = c[i-1][j];
-					a[i][c[i-1][j]] = 1;
-					stu[c[i-1][j]].Absence_Rate++;
-					ValidRequest++;
-					absence_count++;
-				} 
-				TotalRequest++;
-			}
+				c[i][absence_count] = stu1[j].flag;
+				a[i][stu1[j].flag] = 1;
+				stu[stu1[j].flag].Trust -= 0.1;
+				stu[stu1[j].flag].AbsenceRate++;
+				ValidRequest++;
+				absence_count++;
+			 } 
 		}
+		cout << endl;
 	}
 	return absence_count;
 }
 
 void Random_Roll_Call(Student *stu)
 {
-	int check[21][91];//È±ÇÚÈËÊıºÅÂëµÄ 
+	int check[21][91];//ç¼ºå‹¤äººæ•°å·ç çš„ 
 	int absence[21][91];
 	memset(check,0,sizeof(int)*21*91);
 	memset(absence,0,sizeof(int)*21*91);
 	int radomnum;
-	int absence_count=0;
 	int blacklist[90];
-	//µÚÒ»´Î³éµã 
-	TotalRequest+=18; //µÚÒ»´Î³éµã18ÈË£¬´ÓÃûµ¥ºóÃæ³éÈ¡ 
-	for(int i=72; i<90; i++) 
+	//ç¬¬ä¸€æ¬¡æŠ½ç‚¹ 
+	qsort(stu+70,20,sizeof(Student),CmpTrust);
+	for(int i=0; i<90; i++) stu[i].flag = i;
+	TotalRequest += 8;//ç¬¬ä¸€æ¬¡æŠ½ç‚¹ä¿¡ä»»å€¼é å10å
+	int temp = 8;
+	int absence_count=0;
+	for(int i=89; i>50; i--)
 	{
-		if(stu[i].Attend[0] == 0) 
-		{
-			check[1][absence_count] = i; //±íÊ¾È±ÇÚ 
-			absence[1][i] = 1;
-			absence_count++;
-			stu[i].Absence_Rate++;
+		if(stu[i].CourseCommitte == 1) continue;//å¦‚æœä»–è¢«è®¤å®šä¸ºæ˜¯ç­å§”ï¼Œæˆ‘ä»¬è®¤ä¸ºä»–ä¼šæ”¹è¿‡è‡ªæ–°ä¸æŠ½ç‚¹å®ƒ 
+		else{
+			//å‘å‡ºæŠ½ç‚¹è¯·æ±‚ 
+			temp--;
+			if(temp < 0) break;
+			if(stu[i].Attend[0] == 0 )
+			{
+				check[1][absence_count] = i;
+				absence[1][i] = 1;
+				stu[i].Trust -= 0.1;
+				stu[i].AbsenceRate++;
+				ValidRequest++;
+				absence_count++;
+			}
 		}
 	}
-	ValidRequest += absence_count;
 	int curr_AbsenceCount = absence_count;
-	for(int i=2; i<=10; i++) 
+	for(int i=2; i<=20; i++) 
 	{
 		curr_AbsenceCount = RandomRollCall2(i,curr_AbsenceCount,stu,check,absence);
 	}
-	//È·¶¨ºÚÃûµ¥ 
-	int black_count = 0;
-	for(int i=1; i<=90; i++)
-	{
-		if(stu[i].Absence_Rate >= 3)
-		{
-			blacklist[black_count] = i;
-			black_count++;
-		}
-	}
-	for(int i=10; i<20; i++)
-	{
-		for(int j=0; j<black_count; j++)
-		{
-			TotalRequest++;
-			if(stu[blacklist[j]].Attend[i] == 0) 
-				ValidRequest ++;
-		}
-	}
+	
 }
 
 int CmpGrade(const void* a, const void* b)
@@ -129,31 +122,32 @@ int CmpGrade(const void* a, const void* b)
     else if(ret < 0) return 1;
     else return 0;
 }
+int CmpTrust(const void* a, const void* b)
+{
+	double ret = ((Student*)a)->Trust - ((Student*)b)->Trust;
+    if(ret > 0) return -1;
+    else if(ret < 0) return 1;
+    else return 0;
+}
 void ReadFiveCourse()
 {
+	string filename[5] = {"course1.txt","course2.txt","course3.txt","course4.txt","course5.txt"};
 	for(int i=0; i<5; i++)
 	{
 		Student *stu = new Student[90];
-		string filename;
-		cout << "ÇëÊäÈë¿¼ÇÚ±íÎÄ¼şµÄÂ·¾¶>";
-		cin >> filename;
-		stu = ReadFile(filename);
+		stu = ReadFile(filename[i]);
 		qsort(stu,90,sizeof(Student),CmpGrade);
 		int v = ValidRequest;
 		int t = TotalRequest;
 		Random_Roll_Call(stu);
-		cout << "¸ÃÃÅ¿Î³Ì±¾Ñ§ÆÚ³éµãµÄ×ÜÈËÊıÎª£º" << TotalRequest-t <<",ÓĞĞ§³éµãÈËÊıÎª£º" << ValidRequest-v << endl;
-		double E = (ValidRequest*1.0) / (TotalRequest*1.0) ;
-		cout << "±¾´Î³éµãÖĞE=" << E << endl;
+		cout << "è¯¥é—¨è¯¾ç¨‹æœ¬å­¦æœŸæŠ½ç‚¹çš„æ€»äººæ•°ä¸ºï¼š" << TotalRequest-t <<",æœ‰æ•ˆæŠ½ç‚¹äººæ•°ä¸ºï¼š" << ValidRequest-v << endl;
 	}
 }
 
 void PrintE()
 {
-	cout << "³éµã·½°¸Îª£ºµÚ1´Î³éÈ¡¼¨µãºó18ÃûÍ¬Ñ§£¬µÚ2-10´Î³éµãÇ°Ò»´ÎÈ±ÇÚµÄÍ¬Ñ§£¬Èç¹ûËûÖ®Ç°µÄÇ©µ½ÂÊÉÙÓÚ4´Î£¬Ò²Òª¼ÓÈëÏÂÒ»´ÎµÄ³éµãÃûµ¥."; 
-	cout << "ÔÚ2-10´Î³éµãÖĞÈç³éµ½ÈËÊıĞ¡ÓÚ2£¬¾ÍÔÚ¼¨µãºó10ÃûÔÚ³éÒ»´Î.Èç¹ûÈ±ÇÚ´ÎÊı´óÓÚ3´Î¾ÍÀ­ÈëºÚÃûµ¥£¬ºóÃæÊ®´Î×¨ÃÅµãºÚÃûµ¥ÉÏµÄÈË¡£" << endl;
 	double E = (ValidRequest*1.0) / (TotalRequest*1.0) ;
-	cout << "±¾´Î³éµãÖĞE=" << E << endl;
+	cout << "æœ¬æ¬¡æŠ½ç‚¹ä¸­E=" << E << endl;
 }
 
 

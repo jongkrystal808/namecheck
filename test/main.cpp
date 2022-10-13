@@ -1,7 +1,7 @@
 #include"readfile.h"
 int main()
 { 	
-	ReadFiveCourse();//¶ÁÈëÎåÃÅ¿Î³Ì²¢³éµã 
-	PrintE();//Êä³öE 
+	ReadFiveCourse();//è¯»å…¥äº”é—¨è¯¾ç¨‹å¹¶æŠ½ç‚¹ 
+	PrintE();//è¾“å‡ºE 
     return 0;
 }

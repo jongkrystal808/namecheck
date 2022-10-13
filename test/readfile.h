@@ -10,17 +10,22 @@ typedef struct Student{
 	string num;
 	double gpa;
     int Attend[20];
-    int Absence_Rate;
-    int Attend_Rate;
+    int AbsenceRate;
+    int CourseCommitte;
+	double Trust;
+	int flag;
 }Student;
 
 
-Student *ReadFile(string filename); //¶ÁÈëÎÄ¼þµÄº¯Êý
+Student *ReadFile(string filename); //ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Äºï¿½ï¿½ï¿½
 int RandomRollCall2(int i, int Pre_absenceCount,Student *stu,int c[21][91],int a[21][91]); 
 void Random_Roll_Call(Student *stu);
 int CmpGrade(const void* a, const void* b);
+int CmpTrust(const void* a, const void* b);
 void ReadFiveCourse();
 void PrintE();
 #endif
+
+
 
 
